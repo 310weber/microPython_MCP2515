@@ -33,9 +33,9 @@ while True:
         for _i in range(message_count):
             msg = listener.receive()
             print("Message from ", hex(msg.id), "extended:", msg.extended)
-            if isinstance(msg, Message):
+            if hasattr(msg, 'data'):
                 print("message data:", msg.data)
-            if isinstance(msg, RemoteTransmissionRequest):
+            if hasattr(msg, 'length'):
                 print("RTR length:", msg.length)
             print("")
         """

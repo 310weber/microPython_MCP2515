@@ -374,7 +374,7 @@ class MCP2515:
 
         if tx_buffer is None:
             raise RuntimeError("No transmit buffer available to send")
-        if isinstance(message_obj, RemoteTransmissionRequest):
+        if hasattr(message_obj, 'length'):
             dlc = message_obj.length
         else:
             dlc = len(message_obj.data)
@@ -383,7 +383,7 @@ class MCP2515:
             raise AttributeError("Message/RTR length must be <=%d" % _MAX_CAN_MSG_LEN)
         load_command = tx_buffer.LOAD_CMD
 
-        if isinstance(message_obj, RemoteTransmissionRequest):
+        if hasattr(message_obj, 'length'):
             dlc |= _RTR_MASK
 
         # this splits up the id header, dlc (len, rtr status), and message buffer
@@ -397,7 +397,7 @@ class MCP2515:
         self.spi.write(bytes([tx_buffer.LOAD_CMD]))
         self.spi.write(self._id_buffer)                            # write the 4 bytes of the ID: TXBnSIDH, TXBnSIDL, TXBnEID8, TXBnEID0
         self.spi.write(bytes([dlc]))                               # write a byte to the TXBnDLC register
-        if isinstance(message_obj, Message):
+        if hasattr(message_obj, 'data'):
                 self.spi.write(message_obj.data)                   # write the data to the registers: TXBnD0-7
         self.cs.on() 
 
